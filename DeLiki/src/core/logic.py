@@ -1,8 +1,9 @@
 import polars as pl
 
+
 async def get_top_pharmacies(city: str, medical_program: str) -> pl.DataFrame:
     return await (
-        pl.scan_csv("data/reimbursement_legal_entity_divisions_info.csv")
+        pl.scan_csv("src/data/reimbursement_legal_entity_divisions_info.csv")
         .with_columns(
             pl.col("medical_programs_in_divisions")
             .str.extract_all(r'"[^"]+"|[^,{}]+')
@@ -15,7 +16,7 @@ async def get_top_pharmacies(city: str, medical_program: str) -> pl.DataFrame:
         .filter(pl.col("division_settlement").str.to_lowercase() == city.lower())
         .join(
             (
-                pl.scan_csv("data/payments_on_contracts_pharmacy_2025.csv")
+                pl.scan_csv("src/data/payments_on_contracts_pharmacy_2025.csv")
                 .group_by("legal_entity_edrpou")
                 .agg(pl.col("pay_all").sum().alias("activity_score"))
                 .cache()
