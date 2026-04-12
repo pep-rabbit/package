@@ -30,7 +30,7 @@ function getRandomPhone() {
 	return '+380 44 ' + String(100 + Math.floor(Math.random() * 900)) + ' ' + String(1000 + Math.floor(Math.random() * 9000));
 }
 
-function buildCard(index, city, medicine) {
+function buildCard(index, city) {
 	const name = getRandomItem(pharmacyNames);
 	const street = getRandomItem(streets);
 	const cityLabel = city || 'Ваше місто';
