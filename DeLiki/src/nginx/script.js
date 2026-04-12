@@ -2,6 +2,7 @@ const searchButton = document.querySelector('.but');
 const cardsRow = document.querySelector('.cards-row');
 const cityInput = document.querySelector('.vvid input[placeholder="📍Місто"]');
 const medicineInput = document.querySelector('.vvid input[placeholder="💊Препарат"]');
+const resultBlock = document.querySelector('#resultBlock');
 
 const pharmacyNames = [
 	'Подорожник',
@@ -32,12 +33,13 @@ function getRandomPhone() {
 function buildCard(index, city, medicine) {
 	const name = getRandomItem(pharmacyNames);
 	const street = getRandomItem(streets);
+	const cityLabel = city || 'Ваше місто';
 
 	const card = document.createElement('div');
 	card.className = 'card new-card';
 	card.innerHTML = `
 		<h4>${index}. Аптека "${name}"</h4>
-		<p>📍${street}, ${city}</p>
+		<p>📍${street}, ${cityLabel}</p>
 		<p>📞${getRandomPhone()}</p>
 		<div class="card-footer">
 			<div>
@@ -50,8 +52,13 @@ function buildCard(index, city, medicine) {
 }
 
 function renderResults() {
-	const city = cityInput.value.trim() || 'Київ';
-	const medicine = medicineInput.value.trim() || 'Еналаприл';
+	const city = cityInput.value.trim();
+	const medicine = medicineInput.value.trim();
+
+	if (!city && !medicine) {
+		resultBlock.classList.add('hidden');
+		return;
+	}
 
 	cardsRow.innerHTML = '';
 
@@ -62,6 +69,7 @@ function renderResults() {
 	}
 
 	cardsRow.appendChild(fragment);
+	resultBlock.classList.remove('hidden');
 }
 
 searchButton.addEventListener('click', function () {
