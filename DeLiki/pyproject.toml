@@ -1,0 +1,11 @@
+[project]
+name = "deliki"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "granian[uvloop]>=2.7.3",
+    "litestar>=2.21.1",
+    "polars[async]>=1.39.3",
+]
