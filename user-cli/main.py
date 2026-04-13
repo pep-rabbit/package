@@ -132,7 +132,7 @@ class SearchApp(App):
         border-title-color: $accent;
     }
     
-    #placeholder {
+    .placeholder {
         text-align: center;
         color: $text-muted;
         margin-top: 2;
@@ -151,7 +151,7 @@ class SearchApp(App):
 
         with VerticalScroll(id="results-container"):
             yield Static(
-                "Введите данные для поиска и нажмите «Найти»", id="placeholder"
+                "Введите данные для поиска и нажмите «Найти»", classes="placeholder"
             )
 
     async def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -164,7 +164,10 @@ class SearchApp(App):
 
             if not city or not query:
                 results_container.mount(
-                    Static("Введите и город, и название программы/препарата", id="placeholder")
+                    Static(
+                        "Введите и город, и название программы/препарата",
+                        classes="placeholder",
+                    )
                 )
                 return
 
@@ -177,11 +180,13 @@ class SearchApp(App):
             items = response.get("items", [])
             if not response.get("ok", False):
                 error_text = response.get("error", f"HTTP {response.get('status', 'unknown')}")
-                results_container.mount(Static(f"Ошибка запроса: {error_text}", id="placeholder"))
+                results_container.mount(
+                    Static(f"Ошибка запроса: {error_text}", classes="placeholder")
+                )
                 return
 
             if not isinstance(items, list) or not items:
-                results_container.mount(Static("Ничего не найдено", id="placeholder"))
+                results_container.mount(Static("Ничего не найдено", classes="placeholder"))
                 return
 
             for item in items:
