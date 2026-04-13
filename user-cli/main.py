@@ -8,11 +8,6 @@ from textual.app import App, ComposeResult
 from textual.containers import Horizontal, VerticalScroll
 from textual.widgets import Button, Input, Static
 
-try:
-    import uvloop
-except ImportError:
-    uvloop = None
-
 
 class Client:
     def __init__(
@@ -34,7 +29,6 @@ class Client:
                 ttl_dns_cache=300,
                 keepalive_timeout=30.0,
                 enable_cleanup_closed=True,
-                resolver=aiohttp.AsyncResolver(),
             ),
             timeout=aiohttp.ClientTimeout(
                 total=12.0,
@@ -149,13 +143,13 @@ class SearchApp(App):
 
     def compose(self) -> ComposeResult:
         with Horizontal(id="search-bar"):
-            yield Input(placeholder="Введите город...", id="city-input")
-            yield Input(placeholder="Процедура или препарат...", id="query-input")
-            yield Button("Найти", id="search-btn", variant="primary")
+            yield Input(placeholder="Введіть місто...", id="city-input")
+            yield Input(placeholder="Процедура або препарат...", id="query-input")
+            yield Button("Знайти", id="search-btn", variant="primary")
 
         with VerticalScroll(id="results-container"):
             yield Static(
-                "Введите данные для поиска и нажмите «Найти»", classes="placeholder"
+                "Введіть дані для пошуку і натисніть «Знайти»", classes="placeholder"
             )
 
     async def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -169,7 +163,7 @@ class SearchApp(App):
             if not city or not query:
                 results_container.mount(
                     Static(
-                        "Введите и город, и название программы/препарата",
+                        "Введіть і місто, і назву програми/препарата",
                         classes="placeholder",
                     )
                 )
@@ -185,24 +179,24 @@ class SearchApp(App):
             if not response.get("ok", False):
                 error_text = response.get("error", f"HTTP {response.get('status', 'unknown')}")
                 results_container.mount(
-                    Static(f"Ошибка запроса: {error_text}", classes="placeholder")
+                    Static(f"Помилка запиту: {error_text}", classes="placeholder")
                 )
                 return
 
             if not isinstance(items, list) or not items:
-                results_container.mount(Static("Ничего не найдено", classes="placeholder"))
+                results_container.mount(Static("Нічого не знайдено", classes="placeholder"))
                 return
 
             for item in items:
                 if not isinstance(item, dict):
                     continue
                 card_content = (
-                    f"[b]🏥 {item.get('legal_entity_name', 'Не указано')}[/b]\n"
-                    f"🏢 {item.get('division_name', 'Не указано')}\n"
-                    f"📍 {item.get('division_addresses', 'Не указано')}\n"
-                    f"📞 {item.get('division_phone', 'Не указано')}\n"
-                    f"🏷 {item.get('division_type', 'Не указано')}\n"
-                    f"🌍 {item.get('division_settlement', 'Не указано')}\n"
+                    f"[b]🏥 {item.get('legal_entity_name', 'Не вказано')}[/b]\n"
+                    f"🏢 {item.get('division_name', 'Не вказано')}\n"
+                    f"📍 {item.get('division_addresses', 'Не вказано')}\n"
+                    f"📞 {item.get('division_phone', 'Не вказано')}\n"
+                    f"🏷 {item.get('division_type', 'Не вказано')}\n"
+                    f"🌍 {item.get('division_settlement', 'Не вказано')}\n"
                     f"⭐ activity_score: {item.get('activity_score', 0)}"
                 )
                 results_container.mount(Static(card_content, classes="card"))
@@ -212,8 +206,4 @@ class SearchApp(App):
 
 
 if __name__ == "__main__":
-    app = SearchApp().run_async()
-    if uvloop is not None:
-        uvloop.run(app)
-    else:
-        asyncio.run(app)
+    asyncio.run(SearchApp().run_async())
