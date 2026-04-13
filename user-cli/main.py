@@ -4,10 +4,14 @@ import os
 from typing import Any
 
 import aiohttp
-import uvloop
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, VerticalScroll
 from textual.widgets import Button, Input, Static
+
+try:
+    import uvloop
+except ImportError:
+    uvloop = None
 
 
 class Client:
@@ -208,4 +212,8 @@ class SearchApp(App):
 
 
 if __name__ == "__main__":
-    uvloop.run(SearchApp().run_async())
+    app = SearchApp().run_async()
+    if uvloop is not None:
+        uvloop.run(app)
+    else:
+        asyncio.run(app)
