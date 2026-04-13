@@ -8,8 +8,7 @@ async def get_top_pharmacies(city: str, medical_program: str) -> pl.DataFrame:
             pl.col("medical_programs_in_divisions")
             .str.extract_all(r'"[^"]+"|[^,{}]+')
             .list.eval(
-                pl.element().str.strip_chars().str.strip_chars('"'), 
-                parallel=True
+                pl.element().str.strip_chars().str.strip_chars('"'), parallel=True
             ),
         )
         .cache()
