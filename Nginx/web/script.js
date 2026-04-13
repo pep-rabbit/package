@@ -6,6 +6,7 @@ const resultBlock = document.querySelector('#resultBlock');
 const saveButton = document.querySelector('.btn-save');
 
 let lastPharmacies = [];
+const apiBaseUrl = window.API_BASE_URL || '/api';
 
 function buildCard(index, pharmacy) {
 	const card = document.createElement('div');
@@ -27,10 +28,10 @@ function buildCard(index, pharmacy) {
 async function fetchPharmacies(city, medicine) {
 	try {
 		const response = await fetch(
-			`http://127.0.0.1:8080/api/top-pharmacies?city=${encodeURIComponent(city)}&medical_program=${encodeURIComponent(medicine)}`
+			`${apiBaseUrl}/top-pharmacies?city=${encodeURIComponent(city)}&medical_program=${encodeURIComponent(medicine)}`
 		);
 		if (!response.ok) {
-			throw new Error('Помилка при отриманні даних');
+			throw new Error(`API відповів зі статусом ${response.status}`);
 		}
 		return await response.json();
 	} catch (error) {
