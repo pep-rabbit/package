@@ -1,13 +1,11 @@
 [project]
-name = "my-project"
+name = "user-cli"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
-
-[tool.uv.workspace]
-members = [
-    "DeLiki",
-    "user-cli",
+dependencies = [
+    "aiohttp[speedups]>=3.13.5",
+    "textual>=8.2.3",
+    "uvloop>=0.22.1",
 ]
