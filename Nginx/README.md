@@ -1,48 +1,55 @@
 # Nginx (web)
 
-Веб-складова проєкту DeLiki: статичний фронтенд + проксі до API.
+Модуль Nginx, який обслуговує статичний фронтенд і проксіює API-запити у backend-контейнер.
 
-Цей модуль відповідає за користувацький інтерфейс пошуку аптек і за маршрутизацію запитів до бекенду без потреби окремо налаштовувати CORS у браузері.
+## Архітектурна роль
 
-## Що робить
+Модуль є edge-рівнем системи: приймає HTTP-трафік користувача, віддає frontend-статику і маршрутизує API-запити у backend.
 
-- віддає статичні файли фронтенду з папки `web`;
-- приймає запити з браузера на `/api/...` і проксіює їх у контейнер `api`;
-- забезпечує єдину точку входу для користувача: і UI, і API працюють через один хост;
-- підтримує SPA-поведінку через `try_files ... /index.html`.
+## Відповідальність
+
+- віддача `web/index.html`, `web/style.css`, `web/script.js`;
+- reverse proxy для `/api/*` на `http://api:8080`;
+- SPA-fallback через `try_files`.
+
+## Структура
+
+- `default.conf` - Nginx-конфігурація маршрутизації.
+- `web/index.html` - сторінка інтерфейсу.
+- `web/style.css` - стилі.
+- `web/script.js` - запити до API і рендер результатів.
 
 ## Як це працює
 
-1. Браузер відкриває головну сторінку з `web/index.html`.
-2. Скрипт `web/script.js` надсилає запит на `/api/top-pharmacies`.
-3. Nginx у `default.conf` проксіює цей маршрут на `http://api:8080/api/`.
-4. API повертає результат, а фронтенд рендерить картки аптек і дає змогу зберегти JSON-звіт.
+1. Користувач відкриває `/`, Nginx повертає `index.html`.
+2. `script.js` відправляє запит на `/api/top-pharmacies`.
+3. `location /api/` проксіює запит на `http://api:8080/api/`.
+4. Відповідь API повертається в браузер без CORS-конфлікту.
+5. За кнопкою збереження frontend формує `pharmacies_report.json` через Blob.
 
-## Структура модуля
+## Конфігурація маршрутизації (`default.conf`)
 
-- `default.conf` — конфігурація Nginx (статика + reverse proxy).
-- `web/index.html` — розмітка сторінки.
-- `web/style.css` — стилі інтерфейсу.
-- `web/script.js` — логіка запиту до API та відображення результатів.
+- контейнер слухає `80` порт;
+- `location /api/` проксіюється на backend-сервіс `api`;
+- статика обслуговується з `/usr/share/nginx/html`.
 
-## Запуск
+## Бібліотеки та підходи
 
-Рекомендований запуск через кореневий `compose.yml`:
+- Nginx як reverse proxy + static server;
+- frontend без framework-залежностей (vanilla JS);
+- SPA-поведінка через `try_files $uri $uri/ /index.html`.
+
+## Точки розширення
+
+- додати кешування/стиснення статики (gzip або brotli);
+- налаштувати security headers (CSP, X-Frame-Options, Referrer-Policy);
+- додати health endpoint і тонкі timeout/retry-параметри proxy;
+- розділити dev/prod конфіги Nginx.
+
+## Запуск модуля
+
+Модуль розрахований на запуск у складі `docker compose` з кореня проєкту:
 
 ```bash
 docker compose up --build
 ```
-
-Після старту:
-
-- веб-інтерфейс доступний на `http://localhost/`;
-- API для фронтенду доступне через `http://localhost/api/...`.
-
-## Примітка
-
-У `compose.yml` змонтовані томи лише для цього модуля:
-
-- `./Nginx/web -> /usr/share/nginx/html`;
-- `./Nginx/default.conf -> /etc/nginx/conf.d/default.conf`.
-
-Тобто будь-які зміни у `web` або `default.conf` одразу відображаються в контейнері після перезапуску.
