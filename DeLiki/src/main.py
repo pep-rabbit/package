@@ -4,5 +4,5 @@ from src.endpoin import router
 
 app = Litestar(
     route_handlers=[router],
-    cors_config=CORSConfig(allow_origins=["*"])
+    cors_config=CORSConfig()
 )
