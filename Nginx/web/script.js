@@ -1,7 +1,7 @@
 const searchButton = document.querySelector('.but');
 const cardsRow = document.querySelector('.cards-row');
-const cityInput = document.querySelector('.vvid input[placeholder="📍Місто"]');
-const medicineInput = document.querySelector('.vvid input[placeholder="💊Препарат"]');
+const cityInput = document.querySelector('#city-input');
+const medicineInput = document.querySelector('#medicine-input');
 const resultBlock = document.querySelector('#resultBlock');
 const saveButton = document.querySelector('.btn-save');
 
