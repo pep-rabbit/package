@@ -1,7 +1,7 @@
 services:
   api:
     build:
-      context: ./DeLiki
+      context: ./api
     container_name: deliki-api
     expose:
       - "8080"
