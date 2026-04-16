@@ -1,6 +1,6 @@
 from litestar import Litestar
 from litestar.config.cors import CORSConfig
-from src.endpoin import router
+from src.endpoint import router
 
 app = Litestar(
     route_handlers=[router],

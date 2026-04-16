@@ -139,7 +139,7 @@ class SearchApp(App):
 
     def __init__(self) -> None:
         super().__init__()
-        self.client = Client(base_url=os.getenv("API_BASE_URL", "http://127.0.0.1:8080"))
+        self.client = Client(base_url=os.getenv("API_BASE_URL", "http://127.0.0.1:80"))
 
     def compose(self) -> ComposeResult:
         with Horizontal(id="search-bar"):

@@ -19,7 +19,7 @@ async def top_pharmacies(
     medical_program: str,
 ) -> list[PharmacyInfo]:
     pharmacies = await get_top_pharmacies(city, medical_program)
-    return [PharmacyInfo(**pharmacy) for pharmacy in pharmacies.to_dicts()]
+    return [PharmacyInfo(**row) for row in pharmacies.to_dicts()]
 
 
 router = Router(path="/api", route_handlers=[top_pharmacies])
